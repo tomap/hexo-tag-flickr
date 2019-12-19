@@ -117,7 +117,7 @@ function pushImageSizeAndExpress_flickrJson(imageSize, photo_id) {
 function addTagHeight(imgAttr, imgSize) {
   var returnImgAttr = imgAttr;
   returnImgAttr.width = imgSize.width;
-  returnImgAttr['data-height'] = imgSize.height;
+  //returnImgAttr['data-height'] = imgSize.height;
   return returnImgAttr;
 }
 
