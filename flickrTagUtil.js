@@ -1,12 +1,12 @@
 /* global hexo */
 'use strict';
 
-var util = require('util');
-var hexoUtil = require('hexo-util');
-var rPhotoId = /\d{5,}/;
-var rPhotoSize = /^[sqtmnzcbo-]$/;
-var IMG_URL_PATTERN = 'https://farm%s.staticflickr.com/%s/%s_%s%s.%s';
-var PHOTO_SIZE = {
+const util = require('util');
+const hexoUtil = require('hexo-util');
+const rPhotoId = /\d{5,}/;
+const rPhotoSize = /^[sqtmnzcbo-]$/;
+const IMG_URL_PATTERN = 'https://farm%s.staticflickr.com/%s/%s_%s%s.%s';
+const PHOTO_SIZE = {
   's': { width: 75, height: 75 },
   'q': { width: 150, height: 150 },
   't': { width: 100 },
@@ -18,19 +18,19 @@ var PHOTO_SIZE = {
   'b': { width: 1024 },
   'o': {}
 };
-var flickrTagUtil = {
+const flickrTagUtil = {
   convertAttr: function(args) {
-    var attrs = {
+    const attrs = {
       classes: [],
       id: '',
       size: '-',
       isWithLink: false
     };
 
-    var i = 0;
+    let i = 0;
 
     for (i = 0; i < args.length; i++) {
-      var item = args[i];
+      const item = args[i];
 
       if (rPhotoId.test(item)) {
         attrs.id = item;
@@ -52,11 +52,10 @@ var flickrTagUtil = {
   },
 
   imgFormat: function(tag, jsonData) {
-    var secret = '';
-    var format = '';
-    var size,
-      photoSize;
-    var imgAttr = {};
+    let secret = '';
+    let format = '';
+    let size;
+    const imgAttr = {};
 
     switch (tag.size) {
       case 'o':
@@ -90,8 +89,8 @@ var flickrTagUtil = {
       format
     );
 
-    photoSize = PHOTO_SIZE[tag.size];
-    for (var key in photoSize) {
+    const photoSize = PHOTO_SIZE[tag.size];
+    for (const key in photoSize) {
       imgAttr[key] = photoSize[key];
     }
 
