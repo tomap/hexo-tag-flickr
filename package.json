@@ -20,14 +20,14 @@
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.7.2",
-    "hexo-fs": "^3.0.1",
+    "hexo-fs": "^3.1.0",
     "hexo-util": "^2.1.0"
   },
   "devDependencies": {
-    "mocha": "^7.1.2",
+    "mocha": "^8.0.1",
     "chai": "^4.2.0",
     "cheerio": "^1.0.0-rc.3",
-    "eslint": "^7.0.0",
+    "eslint": "^7.4.0",
     "eslint-config-hexo": "^4.1.0"
   },
   "bugs": {
