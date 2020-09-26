@@ -13,9 +13,6 @@ npm install hexo-tag-flickr --save
 Then add this plugin and Flickr API key in your `_config.yml`.
 
 ```
-plugins:
-  - hexo-tag-flickr
-
 # Flickr API key
 flickr_api_key: <Your API key>
 
