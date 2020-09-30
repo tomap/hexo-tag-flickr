@@ -1,29 +1,15 @@
-/* global hexo */
+/* eslint-disable linebreak-style */
 'use strict';
 
-const util = require('util');
-const hexoUtil = require('hexo-util');
 const rPhotoId = /\d{5,}/;
-const rPhotoSize = /^[sqtmnzcbo-]$/;
-const IMG_URL_PATTERN = 'https://farm%s.staticflickr.com/%s/%s_%s%s.%s';
-const PHOTO_SIZE = {
-  's': { width: 75, height: 75 },
-  'q': { width: 150, height: 150 },
-  't': { width: 100 },
-  'm': { width: 240 },
-  'n': { width: 320 },
-  '-': { width: 500 },
-  'z': { width: 640 },
-  'c': { width: 800 },
-  'b': { width: 1024 },
-  'o': {}
-};
+const rPhotoSize = /^[sqtmnwzcbhko-]$/;
+
 const flickrTagUtil = {
-  convertAttr: function(args) {
+  convertAttr: function(args, defaultSize) {
     const attrs = {
       classes: [],
       id: '',
-      size: '-',
+      size: defaultSize,
       isWithLink: false
     };
 
@@ -52,52 +38,45 @@ const flickrTagUtil = {
   },
 
   imgFormat: function(tag, jsonData) {
-    let secret = '';
-    let format = '';
-    let size;
+
     const imgAttr = {};
 
-    switch (tag.size) {
-      case 'o':
-        if (typeof jsonData.photo.originalsecret !== 'undefined') {
-          secret = jsonData.photo.originalsecret;
-          format = jsonData.photo.originalformat;
-        } else {
-          hexo.log.error('Can not access the Flickr id ' + tag.id + ' original size');
-        }
-        size = '_' + tag.size;
-        break;
-
-      case '-':
-        secret = jsonData.photo.secret;
-        format = 'jpg';
-        size = '';
-        break;
-
-      default:
-        secret = jsonData.photo.secret;
-        format = 'jpg';
-        size = '_' + tag.size;
-    }
-
-    imgAttr.src = util.format(IMG_URL_PATTERN,
-      jsonData.photo.farm,
-      jsonData.photo.server,
-      jsonData.photo.id,
-      secret,
-      size,
-      format
-    );
-
-    const photoSize = PHOTO_SIZE[tag.size];
-    for (const key in photoSize) {
-      imgAttr[key] = photoSize[key];
-    }
+    imgAttr.src = jsonData.source;
+    imgAttr.width = jsonData.width;
 
     imgAttr.class = tag.classes.join(' ');
-    imgAttr.alt = hexoUtil.escapeHTML(jsonData.photo.title._content);
 
     return imgAttr;
+  },
+
+  // get image size
+  getImage: function(flickrJson, photo_size) {
+
+    const sizeTable = {
+      's': 'Square',
+      'q': 'Large Square',
+      't': 'Thumbnail',
+      'm': 'Small',
+      'n': 'Small 320',
+      'w': 'Small 400',
+      '-': 'Medium',
+      'z': 'Medium 640',
+      'c': 'Medium 800',
+      'b': 'Large',
+      'h': 'Large 1600',
+      'k': 'Large 2048',
+      'o': 'Original'
+    };
+    let returnValue = {};
+    if (flickrJson && flickrJson.sizes.size) {
+      for (let i = 0; i < flickrJson.sizes.size.length; i++) {
+        returnValue = flickrJson.sizes.size[i];
+        if (flickrJson.sizes.size[i].label === sizeTable[photo_size]) {
+          break;
+        }
+      }
+    }
+    return returnValue;
   }
 };
 
