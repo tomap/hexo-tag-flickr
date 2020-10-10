@@ -1,4 +1,3 @@
-/* eslint-disable linebreak-style */
 /* global hexo */
 /* eslint prefer-promise-reject-errors: 0*/
 'use strict';
@@ -10,6 +9,11 @@ const tagUtil = require('./flickrTagUtil');
 
 const APIKey = hexo.config.flickr.api_key || false;
 const DefaultSize = hexo.config.flickr.default_size || '-'; // default size is medium
+const LinkToSource = hexo.config.flickr.linkto_source || true;
+
+// Enable srcset
+const UseSrcset = hexo.config.flickr.use_srcset || true;
+
 // use hexo-fs
 const fs = require('hexo-fs');
 
@@ -17,12 +21,15 @@ let cacheJson = [];
 
 // option
 const cacheFilePath = hexo.config.flickr.cache_file_path || false;
-let cachePeriod = hexo.config.flickr.cache_expires || false;
-const enabledCache = !(!cacheFilePath && !cachePeriod);
-if (!cachePeriod) cachePeriod = Number(cachePeriod);
+
+// default cache period is 24h, to comply with flickr TOS
+let cachePeriod = hexo.config.flickr.cache_expires || '86400000';
+if (cachePeriod) cachePeriod = Number(cachePeriod);
+
+const enabledCache = cacheFilePath && cachePeriod;
 
 // load cache file
-if (enabledCache && fs.existsSync(cacheFilePath)) {
+if (cacheFilePath && fs.existsSync(cacheFilePath)) {
   cacheJson = fs.readFileSync(cacheFilePath);
   cacheJson = JSON.parse(cacheJson);
 }
@@ -32,9 +39,9 @@ function getFlickrCacheJson(photoId) {
   if (!enabledCache) return null;
   const d = new Date();
   for (let i = 0; i < cacheJson.length; i++) {
-    if (cacheJson[i].fl.id === photoId) {
+    if (cacheJson[i].fl2.id === photoId) {
       if (cacheJson[i].expires > d.getTime()) {
-        return cacheJson[i].fl;
+        return cacheJson[i].fl2;
       }
       break;
     }
@@ -50,13 +57,13 @@ function pushImageSizeAndExpress_flickrJson(image, photo_id) {
   let isMatch = false;
 
   for (let i = 0; i < cacheJson.length; i++) {
-    if (cacheJson[i].fl.id === photo_id) {
-      cacheJson[i].fl.img = image;
+    if (cacheJson[i].fl2.id === photo_id) {
+      cacheJson[i].fl2.img = image;
       cacheJson[i].expires = expiresTime;
       isMatch = true;
     }
   }
-  if (!isMatch)cacheJson.push({'fl': {'id': photo_id, 'img': image}, 'expires': expiresTime });
+  if (!isMatch)cacheJson.push({'fl2': {'id': photo_id, 'img': image}, 'expires': expiresTime });
 }
 
 /**
@@ -69,7 +76,7 @@ const promiseRequest = function(tagArgs) {
     throw new Error('flickr.api_key configuration is required');
   }
 
-  const tag = tagUtil.convertAttr(tagArgs, DefaultSize);
+  const tag = tagUtil.convertAttr(tagArgs, DefaultSize, UseSrcset);
 
   return new Promise((resolve, reject) => {
 
@@ -114,7 +121,6 @@ const promiseRequest = function(tagArgs) {
   });
 };
 
-
 /**
  * Flickr tag
  *
@@ -125,7 +131,13 @@ const promiseRequest = function(tagArgs) {
  */
 hexo.extend.tag.register('flickr', (args, _) => {
   return promiseRequest(args).then(imgAttr_internal => {
-    return hexoUtil.htmlTag('img', imgAttr_internal);
+    const photoId = imgAttr_internal.photoId;
+    delete imgAttr_internal.photoId;
+    const img = hexoUtil.htmlTag('img', imgAttr_internal);
+    if (LinkToSource) {
+      return '<a href=\'https://flic.kr/p/' + tagUtil.toBase58(photoId) + '/sizes/l\' target=\'_blank\' rel=\'noopener noreferrer\'>' + img + '</a>';
+    }
+    return img;
   }, err => {
     hexo.log.error(err);
   });
@@ -135,6 +147,18 @@ hexo.extend.tag.register('flickr', (args, _) => {
 hexo.extend.filter.register('after_generate', () => {
   if (enabledCache) {
     fs.writeFileSync(cacheFilePath, JSON.stringify(cacheJson));
+  }
+});
+
+hexo.extend.filter.register('after_clean', () => {
+  if (enabledCache) {
+    return fs.exists(cacheFilePath).then(exist => {
+      if (!exist) return;
+
+      return fs.unlink(cacheFilePath).then(() => {
+        hexo.log.debug('Deleted flickr cache.');
+      });
+    });
   }
 });
 

@@ -2,15 +2,15 @@
 'use strict';
 
 const rPhotoId = /\d{5,}/;
-const rPhotoSize = /^[sqtmnwzcbhko-]$/;
+const rPhotoSize = /^([sqtmnwzcbhkfo-]|3k|4k|5k|6k)$/;
 
 const flickrTagUtil = {
-  convertAttr: function(args, defaultSize) {
+  convertAttr: function(args, defaultSize, useSrcset) {
     const attrs = {
       classes: [],
       id: '',
       size: defaultSize,
-      isWithLink: false
+      useSrcset: useSrcset
     };
 
     let i = 0;
@@ -40,10 +40,12 @@ const flickrTagUtil = {
   imgFormat: function(tag, jsonData) {
 
     const imgAttr = {};
-
-    imgAttr.src = jsonData.source;
-    imgAttr.width = jsonData.width;
-
+    imgAttr.photoId = tag.id;
+    imgAttr.src = jsonData.selectedSize.source;
+    imgAttr.width = jsonData.selectedSize.width;
+    if (tag.useSrcset) {
+      imgAttr.srcset = jsonData.sizeList.map(e => e.source + ' ' + e.width + 'w').join(', ');
+    }
     imgAttr.class = tag.classes.join(' ');
 
     return imgAttr;
@@ -65,18 +67,41 @@ const flickrTagUtil = {
       'b': 'Large',
       'h': 'Large 1600',
       'k': 'Large 2048',
+      '3k': 'Extra Large 3072',
+      '4k': 'Extra Large 4096',
+      'f': 'VR 4K',
+      '5k': 'Extra Large 5120',
+      '6k': 'Extra Large 6144',
       'o': 'Original'
     };
-    let returnValue = {};
+    const returnValue = {};
+    returnValue.sizeList = [];
     if (flickrJson && flickrJson.sizes.size) {
+      // this code assumes that the sizes provided by flickr API are in ascending order
       for (let i = 0; i < flickrJson.sizes.size.length; i++) {
-        returnValue = flickrJson.sizes.size[i];
+        returnValue.sizeList.push(flickrJson.sizes.size[i]);
+        returnValue.selectedSize = flickrJson.sizes.size[i];
         if (flickrJson.sizes.size[i].label === sizeTable[photo_size]) {
           break;
         }
       }
     }
+
     return returnValue;
+  },
+  toBase58: function(num) {
+    if (typeof num !== 'number') num = parseInt(num, 10);
+    let enc = '';
+    const alpha = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
+    let div = num;
+    let mod;
+    while (num >= 58) {
+      div = num / 58;
+      mod = num - (58 * Math.floor(div));
+      enc = '' + alpha.substr(mod, 1) + enc;
+      num = Math.floor(div);
+    }
+    return div ? '' + alpha.substr(div, 1) + enc : enc;
   }
 };
 
