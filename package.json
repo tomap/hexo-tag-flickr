@@ -24,10 +24,10 @@
     "hexo-util": "^2.4.0"
   },
   "devDependencies": {
-    "mocha": "^8.2.0",
-    "chai": "^4.2.0",
-    "cheerio": "^1.0.0-rc.3",
-    "eslint": "^7.11.0",
+    "mocha": "^8.3.0",
+    "chai": "^4.3.0",
+    "cheerio": "1.0.0-rc.5",
+    "eslint": "^7.20.0",
     "eslint-config-hexo": "^4.1.0"
   },
   "bugs": {
