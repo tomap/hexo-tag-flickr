@@ -28,7 +28,7 @@
     "chai": "^4.3.4",
     "cheerio": "1.0.0-rc.9",
     "eslint": "^7.26.0",
-    "eslint-config-hexo": "^4.1.0"
+    "eslint-config-hexo": "^4.2.0"
   },
   "bugs": {
     "url": "https://github.com/visioncan/hexo-tag-flickr/issues"
