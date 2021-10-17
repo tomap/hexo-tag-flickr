@@ -4,6 +4,10 @@
 const rPhotoId = /\d{5,}/;
 const rPhotoSize = /^([sqtmnwzcbhkfo-]|3k|4k|5k|6k)$/;
 
+const cleanProtocol = function(src) {
+  return src.replace('https:', '');
+};
+
 const flickrTagUtil = {
   convertAttr: function(args, defaultSize, useSrcset) {
     const attrs = {
@@ -41,10 +45,10 @@ const flickrTagUtil = {
 
     const imgAttr = {};
     imgAttr.photoId = tag.id;
-    imgAttr.src = jsonData.selectedSize.source;
+    imgAttr.src = cleanProtocol(jsonData.selectedSize.source);
     imgAttr.width = jsonData.selectedSize.width;
     if (tag.useSrcset) {
-      imgAttr.srcset = jsonData.sizeList.map(e => e.source + ' ' + e.width + 'w').join(', ');
+      imgAttr.srcset = jsonData.sizeList.map(e => cleanProtocol(e.source) + ' ' + e.width + 'w').join(', ');
     }
     imgAttr.class = tag.classes.join(' ');
 

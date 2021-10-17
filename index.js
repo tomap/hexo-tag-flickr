@@ -135,7 +135,7 @@ hexo.extend.tag.register('flickr', (args, _) => {
     delete imgAttr_internal.photoId;
     const img = hexoUtil.htmlTag('img', imgAttr_internal);
     if (LinkToSource) {
-      return '<a href=\'https://flic.kr/p/' + tagUtil.toBase58(photoId) + '/sizes/l\' target=\'_blank\' rel=\'noopener noreferrer\'>' + img + '</a>';
+      return '<a href=\'//flic.kr/p/' + tagUtil.toBase58(photoId) + '/sizes/l\' target=\'_blank\' rel=\'noopener noreferrer\'>' + img + '</a>';
     }
     return img;
   }, err => {

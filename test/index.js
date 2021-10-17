@@ -29,7 +29,7 @@ describe('Hexo Flickr Tag Plugin Util', () => {
 
     it('return correct image size', () => {
       const tag = tagUtil.convertAttr('class1 class2 50435880733 m'.split(' '), 's');
-      tagUtil.imgFormat(tag, jsonData).should.be.an('object').have.property('src').equal('https://live.staticflickr.com/65535/50435880733_3b6d5f6a4b_s.jpg');
+      tagUtil.imgFormat(tag, jsonData).should.be.an('object').have.property('src').equal('//live.staticflickr.com/65535/50435880733_3b6d5f6a4b_s.jpg');
       tagUtil.imgFormat(tag, jsonData).should.be.an('object').have.property('class').equal('class1 class2');
       tagUtil.imgFormat(tag, jsonData).should.be.an('object').have.property('width').equal(75);
     });
@@ -37,7 +37,7 @@ describe('Hexo Flickr Tag Plugin Util', () => {
     it('return original image with html tag', () => {
       const tag = tagUtil.convertAttr('9528576237 s'.split(' '));
       const $ = cheerio.load(hexoUtil.htmlTag('img', tagUtil.imgFormat(tag, jsonData)));
-      $('img').attr('src').should.eql('https://live.staticflickr.com/65535/50435880733_3b6d5f6a4b_s.jpg');
+      $('img').attr('src').should.eql('//live.staticflickr.com/65535/50435880733_3b6d5f6a4b_s.jpg');
     });
   });
 });
