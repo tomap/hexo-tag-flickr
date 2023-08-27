@@ -20,14 +20,14 @@
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.7.2",
-    "hexo-fs": "^4.0.0",
-    "hexo-util": "^3.0.1"
+    "hexo-fs": "^4.1.1",
+    "hexo-util": "^3.1.0"
   },
   "devDependencies": {
-    "mocha": "^10.0.0",
-    "chai": "^4.3.6",
+    "mocha": "^10.2.0",
+    "chai": "^4.3.8",
     "cheerio": "1.0.0-rc.12",
-    "eslint": "^8.20.0",
+    "eslint": "^8.48.0",
     "eslint-config-hexo": "^5.0.0"
   },
   "bugs": {
@@ -42,6 +42,6 @@
     "flickrTagUtil.js"
   ],
   "engines": {
-    "node": ">= 12"
+    "node": ">= 14"
   }
 }
