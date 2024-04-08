@@ -42,6 +42,6 @@
     "flickrTagUtil.js"
   ],
   "engines": {
-    "node": ">= 16"
+    "node": ">= 18"
   }
 }
