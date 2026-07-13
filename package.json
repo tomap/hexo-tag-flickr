@@ -27,7 +27,7 @@
     "mocha": "^11.0.1",
     "chai": "^6.2.2",
     "cheerio": "1.2.0",
-    "eslint": "^9.0.0",
+    "eslint": "^10.7.0",
     "eslint-config-hexo": "^6.0.0"
   },
   "bugs": {
